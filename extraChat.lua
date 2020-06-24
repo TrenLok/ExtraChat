@@ -26,7 +26,7 @@ u8 = encoding.UTF8
 mIni = inicfg.load({
     Main = {
         PosX = sW/2,
-        PosY = sY/2,
+        PosY = sH/2,
         maxMessage = 10,
     },
     Font = {
@@ -38,45 +38,39 @@ mIni = inicfg.load({
 		fontStyleShadow = false,
 	}
 }, string.format('moonloader/config/ExtraChat/%s', configName))
-
-messageFont = renderCreateFont(
-    mIni.Font.font,
-    mIni.Font.fontSize,
-    getFontStyle(
-        mIni.Font.fontStyleBold,
-        mIni.Font.fontStyleItalic,
-        mIni.Font.fontStyleStroke,
-        mIni.Font.fontStyleShadow
-    )
-)
 -- config
 
 -- check directory and config
-if not doesDirectoryExist(getWorkingDirectory().."\\config\\ExtraChat") then createDirectory(getWorkingDirectory().."\\config\\ExtraChat") end
-local status = inicfg.load(mainIni, string.format('ExtraChat/%s', configName))
+if not doesDirectoryExist(getWorkingDirectory().."\\config\\ExtraChat") then
+    createDirectory(getWorkingDirectory().."\\config\\ExtraChat")
+end
+local status = inicfg.load(mIni, string.format('ExtraChat/%s', configName))
 if not doesFileExist(string.format('moonloader/config/ExtraChat/%s', configName)) then
-	sampAddChatMessage(string.format('Файл %s был создан', configName), -1);
-	inicfg.save(mIni, string.format('ExtraChat/%s', configName)) end
+    inicfg.save(mIni, string.format('ExtraChat/%s', configName))
+end
 -- check directory and config
 
 -- imgui variable
 local main_window_state = imgui.ImBool(false)
-local iPosX = imgui.ImInt(mainIni.Main.PosX)
-local iPosY = imgui.ImInt(mainIni.Main.PosY)
-local iMaxMessage = imgui.ImInt(mainIni.Main.maxMessage)
-local iFontSize = imgui.ImInt(mainIni.Font.fontSize)
-local iFont = imgui.ImBuffer(tostring(mainIni.Font.font), 30)
-local iFontStyleBold = imgui.ImBool(mainIni.Font.fontStyleBold)
-local iFontStyleItalic = imgui.ImBool(mainIni.Font.fontStyleItalic)
-local iFontStyleStroke = imgui.ImBool(mainIni.Font.fontStyleStroke)
-local iFontStyleShadow = imgui.ImBool(mainIni.Font.fontStyleShadow)
+local iPosX = imgui.ImInt(mIni.Main.PosX)
+local iPosY = imgui.ImInt(mIni.Main.PosY)
+local iMaxMessage = imgui.ImInt(mIni.Main.maxMessage)
+local iFontSize = imgui.ImInt(mIni.Font.fontSize)
+local iFont = imgui.ImBuffer(tostring(mIni.Font.font), 30)
+local iFontStyleBold = imgui.ImBool(mIni.Font.fontStyleBold)
+local iFontStyleItalic = imgui.ImBool(mIni.Font.fontStyleItalic)
+local iFontStyleStroke = imgui.ImBool(mIni.Font.fontStyleStroke)
+local iFontStyleShadow = imgui.ImBool(mIni.Font.fontStyleShadow)
 -- imgui variable
 
 -- imgui
 function imgui.OnDrawFrame()
     if main_window_state.v then -- чтение и запись значения такой переменной осуществляется через поле v (или Value)
         imgui.SetNextWindowSize(imgui.ImVec2(500, 480), imgui.Cond.FirstUseEver) -- меняем размер
-        imgui.SetNextWindowPos(imgui.ImVec2(sX/2, sY/2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
+        imgui.SetNextWindowPos(
+            imgui.ImVec2(sW/2, sH/2), imgui.Cond.FirstUseEver,
+            imgui.ImVec2(0.5, 0.5)
+        )
         imgui.LockPlayer = true
         -- тут main_window_state передается в функцию imgui.Begin, чтобы можно было отследить закрытие окна нажатием на крестик
         imgui.Begin('AdvancedChat Settings', main_window_state, imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize)
@@ -99,10 +93,10 @@ function imgui.OnDrawFrame()
         end
         if imgui.CollapsingHeader(u8'Список слов') then
             imgui.Text(u8'Список загруженных слов:')
-            for index, data in ipairs(Words) do
+            for index, data in ipairs(keywords) do
                 imgui.Text(index..":".." "..u8(data))
             end
-            if #Words == 0 then
+            if #keywords == 0 then
                 imgui.Text(u8"Список слов пуст")
             end
             imgui.NewLine()
@@ -121,16 +115,16 @@ function imgui.OnDrawFrame()
         if imgui.Button(u8'Сохранить настройки') then
             printStringNow('Settinges saved!', 1000)
             sampAddChatMessage('Save!', -1)
-            mainIni.Test.NickName = nk.v
-            mainIni.Test.PosX = iPosX.v
-            mainIni.Test.PosY = iPosY.v
-            mainIni.Test.maxMessage = iMaxMessage.v
-            mainIni.Font.fontSize = iFontSize.v
-            mainIni.Font.font = iFont.v
-            mainIni.Font.fontStyleBold = iFontStyleBold.v
-            mainIni.Font.fontStyleItalic = iFontStyleItalic.v
-            mainIni.Font.fontStyleStroke = iFontStyleStroke.v
-            mainIni.Font.fontStyleShadow = iFontStyleShadow.v
+            mIni.Test.NickName = nk.v
+            mIni.Test.PosX = iPosX.v
+            mIni.Test.PosY = iPosY.v
+            mIni.Test.maxMessage = iMaxMessage.v
+            mIni.Font.fontSize = iFontSize.v
+            mIni.Font.font = iFont.v
+            mIni.Font.fontStyleBold = iFontStyleBold.v
+            mIni.Font.fontStyleItalic = iFontStyleItalic.v
+            mIni.Font.fontStyleStroke = iFontStyleStroke.v
+            mIni.Font.fontStyleShadow = iFontStyleShadow.v
             messageFont = renderCreateFont(
                 iFont.v,
                 iFontSize.v,
@@ -140,7 +134,7 @@ function imgui.OnDrawFrame()
                     iFontStyleStroke.v,
                     iFontStyleShadow.v)
             )
-            inicfg.save(mainIni, string.format('ExtraChat/%s', configName))
+            inicfg.save(mIni, string.format('ExtraChat/%s', configName))
         end
         imgui.End()
     end
@@ -148,9 +142,9 @@ end
 -- imgui
 
 function sampev.onServerMessage(color, message)
-    for k = 1, #Words do
-        if message:find(Words[k]) then
-            table.insert(keywordsMessage, string.format("%s", message))
+    for k = 1, #keywords do
+        if message:find(keywords[k]) then
+            table.insert(keywordsMessages, string.format("%s", message))
             return {color, message}
         end
     end
@@ -170,6 +164,17 @@ function main()
     sampRegisterChatCommand("removekeyword", removeWord)
     -- commands
 
+    messageFont = renderCreateFont(
+        mIni.Font.font,
+        mIni.Font.fontSize,
+        getFontStyle(
+            mIni.Font.fontStyleBold,
+            mIni.Font.fontStyleItalic,
+            mIni.Font.fontStyleStroke,
+            mIni.Font.fontStyleShadow
+        )
+    )
+
     sampAddChatMessage('[ExtraChat] Скрипт успешно загружен. Автор: TrenLok', -1)
     keywordsInit()
 
@@ -180,7 +185,7 @@ function main()
             table.remove(keywordsMessages, 1)
         end
         local startPosY = mIni.Main.PosY
-        for _, v in ipairs(mess) do
+        for _, v in ipairs(keywordsMessages) do
             renderFontDrawText(messageFont, v, mIni.Main.PosX, startPosY, -1)
             startPosY = startPosY + (mIni.Font.fontSize + 10)
         end
@@ -259,10 +264,10 @@ function removeWord(arg)
         end
         wordFile:close()
         if check then
-            sampAddChatMessage("[ExtraChat] Слово " ..arg.." удалено", -1)
+            sampAddChatMessage("[ExtraChat] Слово '" ..arg.."' удалено", -1)
         else
             sampAddChatMessage(
-                "[ExtraChat] Слово " ..arg.." было не найдено в списке ключевых слов", -1
+                "[ExtraChat] Слово '" ..arg.."' было не найдено в списке ключевых слов", -1
             )
         end
         keywords = newKeywords
@@ -274,19 +279,19 @@ function addWord(arg)
     if #arg == 0 then
         sampAddChatMessage("[ExtraChat] Используйте: /addkeyword [слово]", -1)
     else
-        for k = 1, #Words do
-            if Words[k] == arg then
+        for k = 1, #keywords do
+            if keywords[k] == arg then
                 sampAddChatMessage(
-                    "[ExtraChat] Слово " ..arg.. " уже есть в списке ключевых слов", -1
+                    "[ExtraChat] Слово '" ..arg.. "' уже есть в списке ключевых слов", -1
                 )
                 return
             end
         end
         local text = u8(arg)
-        local wordFile = io.open(MessageFile, "a")
+        local wordFile = io.open(keywordsFile, "a")
         wordFile:write(text..'\n')
         wordFile:close()
-        sampAddChatMessage("[ExtraChat] Слово: " ..arg .. "добавлено в список ключевых слов", -1)
+        sampAddChatMessage("[ExtraChat] Слово '" ..arg .. "' добавлено в список ключевых слов", -1)
         keywordsInit()
     end
 end
