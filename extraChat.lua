@@ -246,6 +246,7 @@ function wordsList()
 end
 
 function removeWord(arg)
+    keywords = {}
     if #arg == 0 then
         sampAddChatMessage("[ExtraChat] Используйте: /removekeyword [слово]", -1)
     else
@@ -303,4 +304,9 @@ function getFontStyle(bold, italic, stroke, shadow)
     if stroke then numStyle = numStyle + 4 end
     if shadow then numStyle = numStyle + 8 end
     return numStyle
+end
+
+function replaceString(string)
+    local result, number = string:gsub("([%(%)%%%.%+%-%*%[%]%?%^$])", "%1%1")
+    return result
 end
