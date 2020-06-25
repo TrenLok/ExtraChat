@@ -199,6 +199,7 @@ function extraChat()
 end
 
 function keywordsInit()
+    keywords = {}
     if doesFileExist(keywordsFile) then
         for keyword in io.lines(keywordsFile) do
             table.insert(keywords, u8:decode(keyword))
