@@ -65,19 +65,21 @@ local iFontStyleShadow = imgui.ImBool(mIni.Font.fontStyleShadow)
 
 -- imgui
 function imgui.OnDrawFrame()
-    if main_window_state.v then -- чтение и запись значения такой переменной осуществляется через поле v (или Value)
-        imgui.SetNextWindowSize(imgui.ImVec2(500, 480), imgui.Cond.FirstUseEver) -- меняем размер
+    if main_window_state.v then
+        imgui.SetNextWindowSize(imgui.ImVec2(500, 480), imgui.Cond.FirstUseEver)
         imgui.SetNextWindowPos(
             imgui.ImVec2(sW/2, sH/2), imgui.Cond.FirstUseEver,
             imgui.ImVec2(0.5, 0.5)
         )
         imgui.LockPlayer = true
-        -- тут main_window_state передается в функцию imgui.Begin, чтобы можно было отследить закрытие окна нажатием на крестик
-        imgui.Begin('AdvancedChat Settings', main_window_state, imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize)
+        imgui.Begin(
+            'ExtraChat Settings',
+            main_window_state,
+            imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize
+        )
         if imgui.CollapsingHeader(u8'Настройки') then
             imgui.Text(u8'Основные настройки')
             imgui.PushItemWidth(180)
-            imgui.InputText(u8'Nick', nk)
             imgui.InputInt(u8'Позиция по X', iPosX)
             imgui.InputInt(u8'Позиция по Y', iPosY)
             imgui.InputInt(u8'Максимальное количество строк', iMaxMessage)
@@ -115,10 +117,9 @@ function imgui.OnDrawFrame()
         if imgui.Button(u8'Сохранить настройки') then
             printStringNow('Settinges saved!', 1000)
             sampAddChatMessage('Save!', -1)
-            mIni.Test.NickName = nk.v
-            mIni.Test.PosX = iPosX.v
-            mIni.Test.PosY = iPosY.v
-            mIni.Test.maxMessage = iMaxMessage.v
+            mIni.Main.PosX = iPosX.v
+            mIni.Main.PosY = iPosY.v
+            mIni.Main.maxMessage = iMaxMessage.v
             mIni.Font.fontSize = iFontSize.v
             mIni.Font.font = iFont.v
             mIni.Font.fontStyleBold = iFontStyleBold.v
