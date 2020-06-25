@@ -182,7 +182,7 @@ function main()
         )
     )
 
-    sampAddChatMessage('[ExtraChat] Скрипт успешно загружен. Автор: TrenLok', -1)
+    sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Скрипт успешно загружен. Автор: {a785e3}TrenLok', -1)
     keywordsInit()
 
     while true do
@@ -210,21 +210,21 @@ function keywordsInit()
         for keyword in io.lines(keywordsFile) do
             table.insert(keywords, u8:decode(keyword))
         end
-        sampAddChatMessage('[ExtraChat] Ключевых слов загружено: '..#keywords, -1)
+        sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Ключевых слов загружено: {a785e3}'..#keywords, -1)
         if #keywords == 0 then
             sampAddChatMessage(
-                '[ExtraChat] Чтобы добавить ключевые слова используйте команду /addkeyword [слово]', -1
+                '{a785e3}[ExtraChat] {fcfdfd}Чтобы добавить ключевые слова используйте команду {a785e3}/addkeyword [слово]', -1
             )
         end
     else
         sampAddChatMessage(
-            '[ExtraChat] Файл с ключевыми словами не обнаружен, файл создан автоматически', -1
+            '{a785e3}[ExtraChat] {fcfdfd}Файл с ключевыми словами не обнаружен и создан автоматически', -1
         )
         sampAddChatMessage(
-            '[ExtraChat] Чтобы добавить ключевые слова используйте команду /addkeyword [слово]', -1
+            '{a785e3}[ExtraChat] {fcfdfd}Чтобы добавить ключевые слова используйте команду {a785e3}/addkeyword [слово]', -1
         )
         sampAddChatMessage(
-            '[ExtraChat] Чтобы посмотреть весь список команд наберите /extrachat', -1
+            '{a785e3}[ExtraChat] {fcfdfd}Чтобы посмотреть весь список команд наберите {a785e3}/extrachat', -1
         )
         local file = io.open(keywordsFile, "w")
         file.close()
@@ -234,28 +234,28 @@ end
 
 function clearChat()
     keywordsMessages = {}
-    sampAddChatMessage('[ExtraChat] Чат был очищен!', -1)
+    sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Чат был очищен!', -1)
 end
 
 function reloadWords()
-    sampAddChatMessage("[ExtraChat] Список ключевых слов был перезагружен", -1)
+    sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Список ключевых слов был перезагружен", -1)
     keywordsInit()
 end
 
 function wordsList()
-    sampAddChatMessage("[ExtraChat] Список ключевых слов:", -1)
+    sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Список ключевых слов:", -1)
     for index, data in ipairs(keywords) do
         print(index..":", data)
         sampAddChatMessage(index..":".." "..data, -1)
     end
     if #keywords == 0 then
-        sampAddChatMessage("[ExtraChat] Список слов пуст", -1)
+        sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Список слов пуст", -1)
     end
 end
 
 function removeWord(arg)
     if #arg == 0 then
-        sampAddChatMessage("[ExtraChat] Используйте: /removekeyword [слово]", -1)
+        sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Используйте: {a785e3}/removekeyword [слово]", -1)
     else
         local newKeywords = {}
         local check = false
@@ -272,10 +272,10 @@ function removeWord(arg)
         end
         wordFile:close()
         if check then
-            sampAddChatMessage("[ExtraChat] Слово '" ..arg.."' удалено", -1)
+            sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Слово {a785e3}'" ..arg.."'{fcfdfd} удалено", -1)
         else
             sampAddChatMessage(
-                "[ExtraChat] Слово '" ..arg.."' было не найдено в списке ключевых слов", -1
+                "{a785e3}[ExtraChat] {fcfdfd}Слово {a785e3}'" ..arg.."'{fcfdfd} было не найдено в списке ключевых слов", -1
             )
         end
         keywords = newKeywords
@@ -285,12 +285,12 @@ end
 
 function addWord(arg)
     if #arg == 0 then
-        sampAddChatMessage("[ExtraChat] Используйте: /addkeyword [слово]", -1)
+        sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Используйте: {a785e3}/addkeyword [слово]", -1)
     else
         for k = 1, #keywords do
             if keywords[k] == arg then
                 sampAddChatMessage(
-                    "[ExtraChat] Слово '" ..arg.. "' уже есть в списке ключевых слов", -1
+                    "{a785e3}[ExtraChat] {fcfdfd}Слово {a785e3}'" ..arg.. "'{fcfdfd} уже есть в списке ключевых слов", -1
                 )
                 return
             end
@@ -299,7 +299,7 @@ function addWord(arg)
         local wordFile = io.open(keywordsFile, "a")
         wordFile:write(text..'\n')
         wordFile:close()
-        sampAddChatMessage("[ExtraChat] Слово '" ..arg .. "' добавлено в список ключевых слов", -1)
+        sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Слово {a785e3}'" ..arg .. "'{fcfdfd} добавлено в список ключевых слов", -1)
         keywordsInit()
     end
 end
