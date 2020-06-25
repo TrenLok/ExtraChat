@@ -145,7 +145,6 @@ end
 function sampev.onServerMessage(color, message)
     for k = 1, #keywords do
         if message:find(replaceString(keywords[k])) then
-            table.insert(messageColor, color)
             local hex = string.format("%016X", color)
             local hexcolor = hex:gsub("(%w%w%w%w%w%w%w%w(%w%w%w%w%w%w)%w%w)", "%2")
             table.insert
@@ -255,7 +254,6 @@ function wordsList()
 end
 
 function removeWord(arg)
-    keywords = {}
     if #arg == 0 then
         sampAddChatMessage("[ExtraChat] Используйте: /removekeyword [слово]", -1)
     else
