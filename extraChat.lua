@@ -144,8 +144,15 @@ end
 
 function sampev.onServerMessage(color, message)
     for k = 1, #keywords do
-        if message:find(keywords[k]) then
-            table.insert(keywordsMessages, string.format("%s", message))
+        if message:find(replaceString(keywords[k])) then
+            table.insert(messageColor, color)
+            local hex = string.format("%016X", color)
+            local hexcolor = hex:gsub("(%w%w%w%w%w%w%w%w(%w%w%w%w%w%w)%w%w)", "%2")
+            table.insert
+            (
+                keywordsMessages,
+                string.format("{%s}%s", hexcolor, message)
+            )
             return {color, message}
         end
     end
@@ -186,7 +193,7 @@ function main()
             table.remove(keywordsMessages, 1)
         end
         local startPosY = mIni.Main.PosY
-        for _, v in ipairs(keywordsMessages) do
+        for k, v in ipairs(keywordsMessages) do
             renderFontDrawText(messageFont, v, mIni.Main.PosX, startPosY, -1)
             startPosY = startPosY + (mIni.Font.fontSize + 10)
         end
