@@ -77,44 +77,44 @@ function imgui.OnDrawFrame()
             main_window_state,
             imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize
         )
-        if imgui.CollapsingHeader(u8'Настройки') then
-            imgui.Text(u8'Основные настройки')
+        if imgui.CollapsingHeader(u8'ГЌГ Г±ГІГ°Г®Г©ГЄГЁ') then
+            imgui.Text(u8'ГЋГ±Г­Г®ГўГ­Г»ГҐ Г­Г Г±ГІГ°Г®Г©ГЄГЁ')
             imgui.PushItemWidth(180)
-            imgui.InputInt(u8'Позиция по X', iPosX)
-            imgui.InputInt(u8'Позиция по Y', iPosY)
-            imgui.InputInt(u8'Максимальное количество строк', iMaxMessage)
+            imgui.InputInt(u8'ГЏГ®Г§ГЁГ¶ГЁГї ГЇГ® X', iPosX)
+            imgui.InputInt(u8'ГЏГ®Г§ГЁГ¶ГЁГї ГЇГ® Y', iPosY)
+            imgui.InputInt(u8'ГЊГ ГЄГ±ГЁГ¬Г Г«ГјГ­Г®ГҐ ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г±ГІГ°Г®ГЄ', iMaxMessage)
             imgui.NewLine()
-            imgui.Text(u8'Настройки шрифта')
-            imgui.InputInt(u8'Размер шрифта', iFontSize)
-            imgui.InputText(u8'Шрифт', iFont)
-            imgui.Checkbox(u8'Полужирный', iFontStyleBold)
-            imgui.Checkbox(u8'Курсив', iFontStyleItalic)
-            imgui.Checkbox(u8'Контур', iFontStyleStroke)
-            imgui.Checkbox(u8'Тень', iFontStyleShadow)
+            imgui.Text(u8'ГЌГ Г±ГІГ°Г®Г©ГЄГЁ ГёГ°ГЁГґГІГ ')
+            imgui.InputInt(u8'ГђГ Г§Г¬ГҐГ° ГёГ°ГЁГґГІГ ', iFontSize)
+            imgui.InputText(u8'ГГ°ГЁГґГІ', iFont)
+            imgui.Checkbox(u8'ГЏГ®Г«ГіГ¦ГЁГ°Г­Г»Г©', iFontStyleBold)
+            imgui.Checkbox(u8'ГЉГіГ°Г±ГЁГў', iFontStyleItalic)
+            imgui.Checkbox(u8'ГЉГ®Г­ГІГіГ°', iFontStyleStroke)
+            imgui.Checkbox(u8'Г’ГҐГ­Гј', iFontStyleShadow)
             imgui.NewLine()
         end
-        if imgui.CollapsingHeader(u8'Список слов') then
-            imgui.Text(u8'Список загруженных слов:')
+        if imgui.CollapsingHeader(u8'Г‘ГЇГЁГ±Г®ГЄ Г±Г«Г®Гў') then
+            imgui.Text(u8'Г‘ГЇГЁГ±Г®ГЄ Г§Г ГЈГ°ГіГ¦ГҐГ­Г­Г»Гµ Г±Г«Г®Гў:')
             for index, data in ipairs(keywords) do
                 imgui.Text(index..":".." "..u8(data))
             end
             if #keywords == 0 then
-                imgui.Text(u8"Список слов пуст")
+                imgui.Text(u8"Г‘ГЇГЁГ±Г®ГЄ Г±Г«Г®Гў ГЇГіГ±ГІ")
             end
             imgui.NewLine()
         end
-        if imgui.CollapsingHeader(u8'Команды') then
-            imgui.Text(u8'Список команд:')
+        if imgui.CollapsingHeader(u8'ГЉГ®Г¬Г Г­Г¤Г»') then
+            imgui.Text(u8'Г‘ГЇГЁГ±Г®ГЄ ГЄГ®Г¬Г Г­Г¤:')
             imgui.NewLine()
-            imgui.Text(u8'/clearechat - Очистить ExtraChat')
-            imgui.Text(u8'/addkeyword - Добавить слово в список')
-            imgui.Text(u8'/removekeyword - Удалить слово из списока')
-            imgui.Text(u8'/reloadwords - Перезагрузить список слов')
-            imgui.Text(u8'/keywordslist - Посмотреть все слова из списка')
-            imgui.Text(u8'/extrachat - Настройка ExtraChat')
+            imgui.Text(u8'/clearechat - ГЋГ·ГЁГ±ГІГЁГІГј ExtraChat')
+            imgui.Text(u8'/addkeyword - Г„Г®ГЎГ ГўГЁГІГј Г±Г«Г®ГўГ® Гў Г±ГЇГЁГ±Г®ГЄ')
+            imgui.Text(u8'/removekeyword - Г“Г¤Г Г«ГЁГІГј Г±Г«Г®ГўГ® ГЁГ§ Г±ГЇГЁГ±Г®ГЄГ ')
+            imgui.Text(u8'/reloadwords - ГЏГҐГ°ГҐГ§Г ГЈГ°ГіГ§ГЁГІГј Г±ГЇГЁГ±Г®ГЄ Г±Г«Г®Гў')
+            imgui.Text(u8'/keywordslist - ГЏГ®Г±Г¬Г®ГІГ°ГҐГІГј ГўГ±ГҐ Г±Г«Г®ГўГ  ГЁГ§ Г±ГЇГЁГ±ГЄГ ')
+            imgui.Text(u8'/extrachat - ГЌГ Г±ГІГ°Г®Г©ГЄГ  ExtraChat')
         end
         imgui.NewLine()
-        if imgui.Button(u8'Сохранить настройки') then
+        if imgui.Button(u8'Г‘Г®ГµГ°Г Г­ГЁГІГј Г­Г Г±ГІГ°Г®Г©ГЄГЁ') then
             printStringNow('Settinges saved!', 1000)
             sampAddChatMessage('Save!', -1)
             mIni.Main.PosX = iPosX.v
@@ -182,7 +182,7 @@ function main()
         )
     )
 
-    sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Скрипт успешно загружен. Автор: {a785e3}TrenLok', -1)
+    sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Г‘ГЄГ°ГЁГЇГІ ГіГ±ГЇГҐГёГ­Г® Г§Г ГЈГ°ГіГ¦ГҐГ­. ГЂГўГІГ®Г°: {a785e3}TrenLok', -1)
     keywordsInit()
 
     while true do
@@ -210,21 +210,21 @@ function keywordsInit()
         for keyword in io.lines(keywordsFile) do
             table.insert(keywords, u8:decode(keyword))
         end
-        sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Ключевых слов загружено: {a785e3}'..#keywords, -1)
+        sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}ГЉГ«ГѕГ·ГҐГўГ»Гµ Г±Г«Г®Гў Г§Г ГЈГ°ГіГ¦ГҐГ­Г®: {a785e3}'..#keywords, -1)
         if #keywords == 0 then
             sampAddChatMessage(
-                '{a785e3}[ExtraChat] {fcfdfd}Чтобы добавить ключевые слова используйте команду {a785e3}/addkeyword [слово]', -1
+                '{a785e3}[ExtraChat] {fcfdfd}Г—ГІГ®ГЎГ» Г¤Г®ГЎГ ГўГЁГІГј ГЄГ«ГѕГ·ГҐГўГ»ГҐ Г±Г«Г®ГўГ  ГЁГ±ГЇГ®Г«ГјГ§ГіГ©ГІГҐ ГЄГ®Г¬Г Г­Г¤Гі {a785e3}/addkeyword [Г±Г«Г®ГўГ®]', -1
             )
         end
     else
         sampAddChatMessage(
-            '{a785e3}[ExtraChat] {fcfdfd}Файл с ключевыми словами не обнаружен и создан автоматически', -1
+            '{a785e3}[ExtraChat] {fcfdfd}Г”Г Г©Г« Г± ГЄГ«ГѕГ·ГҐГўГ»Г¬ГЁ Г±Г«Г®ГўГ Г¬ГЁ Г­ГҐ Г®ГЎГ­Г Г°ГіГ¦ГҐГ­ ГЁ Г±Г®Г§Г¤Г Г­ Г ГўГІГ®Г¬Г ГІГЁГ·ГҐГ±ГЄГЁ', -1
         )
         sampAddChatMessage(
-            '{a785e3}[ExtraChat] {fcfdfd}Чтобы добавить ключевые слова используйте команду {a785e3}/addkeyword [слово]', -1
+            '{a785e3}[ExtraChat] {fcfdfd}Г—ГІГ®ГЎГ» Г¤Г®ГЎГ ГўГЁГІГј ГЄГ«ГѕГ·ГҐГўГ»ГҐ Г±Г«Г®ГўГ  ГЁГ±ГЇГ®Г«ГјГ§ГіГ©ГІГҐ ГЄГ®Г¬Г Г­Г¤Гі {a785e3}/addkeyword [Г±Г«Г®ГўГ®]', -1
         )
         sampAddChatMessage(
-            '{a785e3}[ExtraChat] {fcfdfd}Чтобы посмотреть весь список команд наберите {a785e3}/extrachat', -1
+            '{a785e3}[ExtraChat] {fcfdfd}Г—ГІГ®ГЎГ» ГЇГ®Г±Г¬Г®ГІГ°ГҐГІГј ГўГҐГ±Гј Г±ГЇГЁГ±Г®ГЄ ГЄГ®Г¬Г Г­Г¤ Г­Г ГЎГҐГ°ГЁГІГҐ {a785e3}/extrachat', -1
         )
         local file = io.open(keywordsFile, "w")
         file.close()
@@ -234,28 +234,28 @@ end
 
 function clearChat()
     keywordsMessages = {}
-    sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Чат был очищен!', -1)
+    sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Г—Г ГІ ГЎГ»Г« Г®Г·ГЁГ№ГҐГ­!', -1)
 end
 
 function reloadWords()
-    sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Список ключевых слов был перезагружен", -1)
+    sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Г‘ГЇГЁГ±Г®ГЄ ГЄГ«ГѕГ·ГҐГўГ»Гµ Г±Г«Г®Гў ГЎГ»Г« ГЇГҐГ°ГҐГ§Г ГЈГ°ГіГ¦ГҐГ­", -1)
     keywordsInit()
 end
 
 function wordsList()
-    sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Список ключевых слов:", -1)
+    sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Г‘ГЇГЁГ±Г®ГЄ ГЄГ«ГѕГ·ГҐГўГ»Гµ Г±Г«Г®Гў:", -1)
     for index, data in ipairs(keywords) do
         print(index..":", data)
         sampAddChatMessage(index..":".." "..data, -1)
     end
     if #keywords == 0 then
-        sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Список слов пуст", -1)
+        sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Г‘ГЇГЁГ±Г®ГЄ Г±Г«Г®Гў ГЇГіГ±ГІ", -1)
     end
 end
 
 function removeWord(arg)
     if #arg == 0 then
-        sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Используйте: {a785e3}/removekeyword [слово]", -1)
+        sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Г€Г±ГЇГ®Г«ГјГ§ГіГ©ГІГҐ: {a785e3}/removekeyword [Г±Г«Г®ГўГ®]", -1)
     else
         local newKeywords = {}
         local check = false
@@ -272,10 +272,10 @@ function removeWord(arg)
         end
         wordFile:close()
         if check then
-            sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Слово {a785e3}'" ..arg.."'{fcfdfd} удалено", -1)
+            sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Г‘Г«Г®ГўГ® {a785e3}'" ..arg.."'{fcfdfd} ГіГ¤Г Г«ГҐГ­Г®", -1)
         else
             sampAddChatMessage(
-                "{a785e3}[ExtraChat] {fcfdfd}Слово {a785e3}'" ..arg.."'{fcfdfd} было не найдено в списке ключевых слов", -1
+                "{a785e3}[ExtraChat] {fcfdfd}Г‘Г«Г®ГўГ® {a785e3}'" ..arg.."'{fcfdfd} ГЎГ»Г«Г® Г­ГҐ Г­Г Г©Г¤ГҐГ­Г® Гў Г±ГЇГЁГ±ГЄГҐ ГЄГ«ГѕГ·ГҐГўГ»Гµ Г±Г«Г®Гў", -1
             )
         end
         keywords = newKeywords
@@ -285,12 +285,12 @@ end
 
 function addWord(arg)
     if #arg == 0 then
-        sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Используйте: {a785e3}/addkeyword [слово]", -1)
+        sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Г€Г±ГЇГ®Г«ГјГ§ГіГ©ГІГҐ: {a785e3}/addkeyword [Г±Г«Г®ГўГ®]", -1)
     else
         for k = 1, #keywords do
             if keywords[k] == arg then
                 sampAddChatMessage(
-                    "{a785e3}[ExtraChat] {fcfdfd}Слово {a785e3}'" ..arg.. "'{fcfdfd} уже есть в списке ключевых слов", -1
+                    "{a785e3}[ExtraChat] {fcfdfd}Г‘Г«Г®ГўГ® {a785e3}'" ..arg.. "'{fcfdfd} ГіГ¦ГҐ ГҐГ±ГІГј Гў Г±ГЇГЁГ±ГЄГҐ ГЄГ«ГѕГ·ГҐГўГ»Гµ Г±Г«Г®Гў", -1
                 )
                 return
             end
@@ -299,7 +299,7 @@ function addWord(arg)
         local wordFile = io.open(keywordsFile, "a")
         wordFile:write(text..'\n')
         wordFile:close()
-        sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Слово {a785e3}'" ..arg .. "'{fcfdfd} добавлено в список ключевых слов", -1)
+        sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Г‘Г«Г®ГўГ® {a785e3}'" ..arg .. "'{fcfdfd} Г¤Г®ГЎГ ГўГ«ГҐГ­Г® Гў Г±ГЇГЁГ±Г®ГЄ ГЄГ«ГѕГ·ГҐГўГ»Гµ Г±Г«Г®Гў", -1)
         keywordsInit()
     end
 end
