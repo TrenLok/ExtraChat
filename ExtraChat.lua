@@ -335,7 +335,13 @@ end
 
 function addWord(arg)
     if #arg == 0 then
-        sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Используйте: {a785e3}/addkeyword [слово]", -1)
+        sampAddChatMessage(
+            "{a785e3}[ExtraChat] {fcfdfd}Используйте: {a785e3}/addkeyword [слово]", -1
+        )
+    elseif #arg < 3 or #arg > 25 then
+        sampAddChatMessage(
+            "{a785e3}[ExtraChat] {fcfdfd}Длина ключевого слова должна быть от 3 до 25 символов", -1
+        )
     else
         for k = 1, #keywords do
             if keywords[k] == arg then
