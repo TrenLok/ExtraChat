@@ -53,6 +53,7 @@ end
 
 -- imgui variable
 local main_window_state = imgui.ImBool(false)
+local remove_window_state = imgui.ImBool(false)
 local iPosX = imgui.ImInt(mIni.Main.PosX)
 local iPosY = imgui.ImInt(mIni.Main.PosY)
 local iMaxMessage = imgui.ImInt(mIni.Main.maxMessage)
@@ -115,6 +116,7 @@ function imgui.OnDrawFrame()
             imgui.Text(u8'/reloadwords - Перезагрузить список слов')
             imgui.Text(u8'/keywordslist - Посмотреть все слова из списка')
             imgui.Text(u8'/extrachat - Настройка ExtraChat')
+            imgui.Text(u8'/removeallkeywords - Удалить все ключевые слова')
         end
         imgui.NewLine()
         if imgui.Button(u8'Сохранить настройки') then
@@ -139,6 +141,42 @@ function imgui.OnDrawFrame()
                     iFontStyleShadow.v)
             )
             inicfg.save(mIni, string.format('ExtraChat/%s', configName))
+        end
+        imgui.End()
+    end
+    if remove_window_state.v then
+        imgui.SetNextWindowSize(imgui.ImVec2(300, 100))
+        imgui.SetNextWindowPos(
+            imgui.ImVec2(sW/2, sH/2), imgui.Cond.FirstUseEver,
+            imgui.ImVec2(0.5, 0.5)
+        )
+        imgui.Begin(
+            u8'ExtraChat подтверждение',
+            remove_window_state,
+            imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize
+        )
+        imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8"Вы уверены?").x) / 2)
+        imgui.Text(u8'Вы уверены?')
+        imgui.NewLine()
+        imgui.SetCursorPosX((imgui.GetWindowWidth() - 150 + imgui.GetStyle().ItemSpacing.x) /
+         2)
+        if imgui.Button(u8"Да", imgui.ImVec2(75, 20)) then
+            keywords = {}
+            os.remove(keywordsFile)
+            sampAddChatMessage(
+                '{a785e3}[ExtraChat] {fcfdfd}Все ключевые слова были удалены', -1
+            )
+            sampAddChatMessage(
+                '{a785e3}[ExtraChat] {fcfdfd}Чтобы добавить ключевые слова используйте команду {a785e3}/addkeyword [слово]', -1
+            )
+            local file = io.open(keywordsFile, "w")
+            file.close()
+            file = nil
+            remove_window_state.v = not remove_window_state.v
+        end
+        imgui.SameLine()
+        if imgui.Button(u8"Нет", imgui.ImVec2(75, 20)) then
+            remove_window_state.v = not remove_window_state.v
         end
         imgui.End()
     end
@@ -175,6 +213,7 @@ function main()
 
     -- commands
     sampRegisterChatCommand("clearchat", clearChat)
+    sampRegisterChatCommand("removeallkeywords", rmKeywordsList)
     sampRegisterChatCommand("addkeyword", addWord)
     sampRegisterChatCommand("reloadkeywords", reloadWords)
     sampRegisterChatCommand("keywordslist", wordsList)
@@ -198,7 +237,7 @@ function main()
 
     while true do
         wait(0)
-        imgui.Process = main_window_state.v
+        imgui.Process = main_window_state.v or remove_window_state.v
         if #keywordsMessages > mIni.Main.maxMessage then
             table.remove(keywordsMessages, 1)
         end
@@ -327,4 +366,8 @@ end
 function replaceString(string)
     local result, number = string:gsub("([%(%)%%%.%+%-%*%[%]%?%^$])", "%1%1")
     return result
+end
+
+function rmKeywordsList()
+    remove_window_state.v = not remove_window_state.v
 end
