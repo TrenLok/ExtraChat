@@ -28,6 +28,7 @@ mIni = inicfg.load({
         PosX = sW/2,
         PosY = sH/2,
         maxMessage = 10,
+        timestamp = false,
     },
     Font = {
 		font = 'Arial',
@@ -55,6 +56,7 @@ local main_window_state = imgui.ImBool(false)
 local iPosX = imgui.ImInt(mIni.Main.PosX)
 local iPosY = imgui.ImInt(mIni.Main.PosY)
 local iMaxMessage = imgui.ImInt(mIni.Main.maxMessage)
+local iTimestamp = imgui.ImBool(mIni.Main.timestamp)
 local iFontSize = imgui.ImInt(mIni.Font.fontSize)
 local iFont = imgui.ImBuffer(tostring(mIni.Font.font), 30)
 local iFontStyleBold = imgui.ImBool(mIni.Font.fontStyleBold)
@@ -83,6 +85,7 @@ function imgui.OnDrawFrame()
             imgui.InputInt(u8'Позиция по X', iPosX)
             imgui.InputInt(u8'Позиция по Y', iPosY)
             imgui.InputInt(u8'Максимальное количество строк', iMaxMessage)
+            imgui.Checkbox(u8'Показывать время отправки сообщения', iTimestamp)
             imgui.NewLine()
             imgui.Text(u8'Настройки шрифта')
             imgui.InputInt(u8'Размер шрифта', iFontSize)
@@ -116,10 +119,11 @@ function imgui.OnDrawFrame()
         imgui.NewLine()
         if imgui.Button(u8'Сохранить настройки') then
             printStringNow('Settinges saved!', 1000)
-            sampAddChatMessage('Save!', -1)
+            sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Настройки сохранены!', -1)
             mIni.Main.PosX = iPosX.v
             mIni.Main.PosY = iPosY.v
             mIni.Main.maxMessage = iMaxMessage.v
+            mIni.Main.timestamp =  iTimestamp.v
             mIni.Font.fontSize = iFontSize.v
             mIni.Font.font = iFont.v
             mIni.Font.fontStyleBold = iFontStyleBold.v
@@ -147,11 +151,19 @@ function sampev.onServerMessage(color, message)
         if message:find(replaceString(keywords[k])) then
             local hex = string.format("%016X", color)
             local hexcolor = hex:gsub("(%w%w%w%w%w%w%w%w(%w%w%w%w%w%w)%w%w)", "%2")
-            table.insert
-            (
-                keywordsMessages,
-                string.format("{%s}%s", hexcolor, message)
-            )
+            if mIni.Main.timestamp then
+                table.insert
+                (
+                    keywordsMessages,
+                    string.format("%s {%s}%s", os.date("[%H:%M:%S] "), hexcolor, message)
+                )
+            else
+                table.insert
+                (
+                    keywordsMessages,
+                    string.format("{%s}%s", hexcolor, message)
+                )
+            end
             return {color, message}
         end
     end
@@ -192,7 +204,7 @@ function main()
             table.remove(keywordsMessages, 1)
         end
         local startPosY = mIni.Main.PosY
-        for k, v in ipairs(keywordsMessages) do
+        for _, v in ipairs(keywordsMessages) do
             renderFontDrawText(messageFont, v, mIni.Main.PosX, startPosY, -1)
             startPosY = startPosY + (mIni.Font.fontSize + 10)
         end
