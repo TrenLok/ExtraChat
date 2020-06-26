@@ -153,11 +153,11 @@ function imgui.OnDrawFrame()
             imgui.NewLine()
             imgui.Text(u8'/clearechat - Очистить ExtraChat')
             imgui.Text(u8'/addkeyword - Добавить слово в список')
-            imgui.Text(u8'/removekeyword - Удалить слово из списока')
+            imgui.Text(u8'/rmkeyword - Удалить слово из списока')
             imgui.Text(u8'/reloadwords - Перезагрузить список слов')
             imgui.Text(u8'/keywordslist - Посмотреть все слова из списка')
             imgui.Text(u8'/extrachat - Настройка ExtraChat')
-            imgui.Text(u8'/removeallkeywords - Удалить все ключевые слова')
+            imgui.Text(u8'/rmallkeywords - Удалить все ключевые слова')
         end
         imgui.End()
     end
@@ -277,13 +277,13 @@ function main()
     while not isSampAvailable() do wait(100) end
 
     -- commands
-    sampRegisterChatCommand("clearchat", clearChat)
-    sampRegisterChatCommand("removeallkeywords", rmKeywordsList)
+    sampRegisterChatCommand("clearechat", clearChat)
+    sampRegisterChatCommand("rmallkeywords", rmKeywordsList)
     sampRegisterChatCommand("addkeyword", addWord)
     sampRegisterChatCommand("reloadkeywords", reloadWords)
     sampRegisterChatCommand("keywordslist", wordsList)
     sampRegisterChatCommand("extrachat", extraChat)
-    sampRegisterChatCommand("removekeyword", removeWord)
+    sampRegisterChatCommand("rmkeyword", removeWord)
     -- commands
 
     messageFont = renderCreateFont(
@@ -373,7 +373,7 @@ end
 
 function removeWord(arg)
     if #arg == 0 then
-        sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Используйте: {a785e3}/removekeyword [слово]", -1)
+        sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Используйте: {a785e3}/rmkeyword [слово]", -1)
     else
         local newKeywords = {}
         local check = false
