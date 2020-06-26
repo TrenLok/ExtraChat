@@ -117,8 +117,7 @@ function imgui.OnDrawFrame()
         end
         imgui.NewLine()
         if imgui.Button(u8'Сохранить настройки') then
-            printStringNow('Settinges saved!', 1000)
-            sampAddChatMessage('Save!', -1)
+            sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Настройки сохранены!', -1)
             mIni.Main.PosX = iPosX.v
             mIni.Main.PosY = iPosY.v
             mIni.Main.maxMessage = iMaxMessage.v
