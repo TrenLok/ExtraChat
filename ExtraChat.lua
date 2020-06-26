@@ -54,6 +54,8 @@ end
 -- imgui variable
 local main_window_state = imgui.ImBool(false)
 local remove_window_state = imgui.ImBool(false)
+local addkeyword_window_state = imgui.ImBool(false)
+local rmkeyword_window_state = imgui.ImBool(false)
 local iPosX = imgui.ImInt(mIni.Main.PosX)
 local iPosY = imgui.ImInt(mIni.Main.PosY)
 local iMaxMessage = imgui.ImInt(mIni.Main.maxMessage)
@@ -64,6 +66,8 @@ local iFontStyleBold = imgui.ImBool(mIni.Font.fontStyleBold)
 local iFontStyleItalic = imgui.ImBool(mIni.Font.fontStyleItalic)
 local iFontStyleStroke = imgui.ImBool(mIni.Font.fontStyleStroke)
 local iFontStyleShadow = imgui.ImBool(mIni.Font.fontStyleShadow)
+
+local iKeyword = imgui.ImBuffer(25)
 -- imgui variable
 
 -- imgui
@@ -92,10 +96,36 @@ function imgui.OnDrawFrame()
             imgui.InputInt(u8'Размер шрифта', iFontSize)
             imgui.InputText(u8'Шрифт', iFont)
             imgui.Checkbox(u8'Полужирный', iFontStyleBold)
+            imgui.SameLine()
             imgui.Checkbox(u8'Курсив', iFontStyleItalic)
+            imgui.SameLine()
             imgui.Checkbox(u8'Контур', iFontStyleStroke)
+            imgui.SameLine()
             imgui.Checkbox(u8'Тень', iFontStyleShadow)
             imgui.NewLine()
+            if imgui.Button(u8'Сохранить настройки') then
+                sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Настройки сохранены!', -1)
+                mIni.Main.PosX = iPosX.v
+                mIni.Main.PosY = iPosY.v
+                mIni.Main.maxMessage = iMaxMessage.v
+                mIni.Main.timestamp =  iTimestamp.v
+                mIni.Font.fontSize = iFontSize.v
+                mIni.Font.font = iFont.v
+                mIni.Font.fontStyleBold = iFontStyleBold.v
+                mIni.Font.fontStyleItalic = iFontStyleItalic.v
+                mIni.Font.fontStyleStroke = iFontStyleStroke.v
+                mIni.Font.fontStyleShadow = iFontStyleShadow.v
+                messageFont = renderCreateFont(
+                    iFont.v,
+                    iFontSize.v,
+                    getFontStyle(
+                        iFontStyleBold.v,
+                        iFontStyleItalic.v,
+                        iFontStyleStroke.v,
+                        iFontStyleShadow.v)
+                )
+                inicfg.save(mIni, string.format('ExtraChat/%s', configName))
+            end
         end
         if imgui.CollapsingHeader(u8'Список слов') then
             imgui.Text(u8'Список загруженных слов:')
@@ -106,6 +136,17 @@ function imgui.OnDrawFrame()
                 imgui.Text(u8"Список слов пуст")
             end
             imgui.NewLine()
+            if imgui.Button(u8'Добавить ключевое слово') then
+                addkeyword_window_state.v = true
+                rmkeyword_window_state.v = false
+                iKeyword.v = ''
+            end
+            imgui.SameLine()
+            if imgui.Button(u8'Удалить ключевое слово') then
+                rmkeyword_window_state.v = true
+                addkeyword_window_state.v = false
+                iKeyword.v = ''
+            end
         end
         if imgui.CollapsingHeader(u8'Команды') then
             imgui.Text(u8'Список команд:')
@@ -117,30 +158,6 @@ function imgui.OnDrawFrame()
             imgui.Text(u8'/keywordslist - Посмотреть все слова из списка')
             imgui.Text(u8'/extrachat - Настройка ExtraChat')
             imgui.Text(u8'/removeallkeywords - Удалить все ключевые слова')
-        end
-        imgui.NewLine()
-        if imgui.Button(u8'Сохранить настройки') then
-            sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Настройки сохранены!', -1)
-            mIni.Main.PosX = iPosX.v
-            mIni.Main.PosY = iPosY.v
-            mIni.Main.maxMessage = iMaxMessage.v
-            mIni.Main.timestamp =  iTimestamp.v
-            mIni.Font.fontSize = iFontSize.v
-            mIni.Font.font = iFont.v
-            mIni.Font.fontStyleBold = iFontStyleBold.v
-            mIni.Font.fontStyleItalic = iFontStyleItalic.v
-            mIni.Font.fontStyleStroke = iFontStyleStroke.v
-            mIni.Font.fontStyleShadow = iFontStyleShadow.v
-            messageFont = renderCreateFont(
-                iFont.v,
-                iFontSize.v,
-                getFontStyle(
-                    iFontStyleBold.v,
-                    iFontStyleItalic.v,
-                    iFontStyleStroke.v,
-                    iFontStyleShadow.v)
-            )
-            inicfg.save(mIni, string.format('ExtraChat/%s', configName))
         end
         imgui.End()
     end
@@ -177,6 +194,54 @@ function imgui.OnDrawFrame()
         imgui.SameLine()
         if imgui.Button(u8"Нет", imgui.ImVec2(75, 20)) then
             remove_window_state.v = not remove_window_state.v
+        end
+        imgui.End()
+    end
+    if addkeyword_window_state.v then
+        imgui.SetNextWindowSize(imgui.ImVec2(360, 100))
+        imgui.SetNextWindowPos(
+            imgui.ImVec2(sW/2, sH/2), imgui.Cond.FirstUseEver,
+            imgui.ImVec2(0.5, 0.5)
+        )
+        imgui.Begin(
+            u8'Добавить ключевое слово',
+            addkeyword_window_state,
+            imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize
+        )
+        imgui.PushItemWidth(180)
+        imgui.InputText(u8"Введите ключевое слово", iKeyword)
+        imgui.NewLine()
+        if imgui.Button(u8"Добавить") then
+            if #iKeyword.v == 0 then
+                sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Введите слово', -1)
+            else
+                addWord(iKeyword.v)
+                iKeyword.v = ''
+            end
+        end
+        imgui.End()
+    end
+    if rmkeyword_window_state.v then
+        imgui.SetNextWindowSize(imgui.ImVec2(360, 100))
+        imgui.SetNextWindowPos(
+            imgui.ImVec2(sW/2, sH/2), imgui.Cond.FirstUseEver,
+            imgui.ImVec2(0.5, 0.5)
+        )
+        imgui.Begin(
+            u8'Удалить ключевое слово',
+            rmkeyword_window_state,
+            imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize
+        )
+        imgui.PushItemWidth(180)
+        imgui.InputText(u8"Введите ключевое слово", iKeyword)
+        imgui.NewLine()
+        if imgui.Button(u8"Удалить") then
+            if #iKeyword.v == 0 then
+                sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Введите слово', -1)
+            else
+                removeWord(iKeyword.v)
+                iKeyword.v = ''
+            end
         end
         imgui.End()
     end
@@ -237,7 +302,10 @@ function main()
 
     while true do
         wait(0)
-        imgui.Process = main_window_state.v or remove_window_state.v
+        imgui.Process = main_window_state.v
+                or remove_window_state.v
+                or addkeyword_window_state.v
+                or rmkeyword_window_state.v
         if #keywordsMessages > mIni.Main.maxMessage then
             table.remove(keywordsMessages, 1)
         end
