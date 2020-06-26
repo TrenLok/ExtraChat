@@ -56,7 +56,6 @@ local main_window_state = imgui.ImBool(false)
 local iPosX = imgui.ImInt(mIni.Main.PosX)
 local iPosY = imgui.ImInt(mIni.Main.PosY)
 local iMaxMessage = imgui.ImInt(mIni.Main.maxMessage)
-local iTimestamp = imgui.ImBool(mIni.Main.timestamp)
 local iFontSize = imgui.ImInt(mIni.Font.fontSize)
 local iFont = imgui.ImBuffer(tostring(mIni.Font.font), 30)
 local iFontStyleBold = imgui.ImBool(mIni.Font.fontStyleBold)
@@ -119,7 +118,7 @@ function imgui.OnDrawFrame()
         imgui.NewLine()
         if imgui.Button(u8'Сохранить настройки') then
             printStringNow('Settinges saved!', 1000)
-            sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Настройки сохранены!', -1)
+            sampAddChatMessage('Save!', -1)
             mIni.Main.PosX = iPosX.v
             mIni.Main.PosY = iPosY.v
             mIni.Main.maxMessage = iMaxMessage.v
