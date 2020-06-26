@@ -37,7 +37,15 @@ mIni = inicfg.load({
 		fontStyleItalic = false,
 		fontStyleStroke = false,
 		fontStyleShadow = false,
-	}
+	},
+    Commands = {
+        clearChat = 'clearechat',
+        addKeyword = 'addkeyword',
+        removeKeyword = 'rmkeyword',
+        reloadKeywords = 'reloadkeywords',
+        keywordsList = 'keywordslist',
+        removeAllKeywords = 'rmallkeywords',
+    }
 }, string.format('moonloader/config/ExtraChat/%s', configName))
 -- config
 
@@ -68,6 +76,13 @@ local iFontStyleStroke = imgui.ImBool(mIni.Font.fontStyleStroke)
 local iFontStyleShadow = imgui.ImBool(mIni.Font.fontStyleShadow)
 
 local iKeyword = imgui.ImBuffer(25)
+
+local iClearChat = imgui.ImBuffer(tostring(mIni.Commands.clearChat), 30)
+local iReloadKeywords = imgui.ImBuffer(tostring(mIni.Commands.reloadKeywords), 30)
+local iRemoveKeyword = imgui.ImBuffer(tostring(mIni.Commands.removeKeyword), 30)
+local iAddKeyword = imgui.ImBuffer(tostring(mIni.Commands.addKeyword), 30)
+local iRemoveAllKeywords = imgui.ImBuffer(tostring(mIni.Commands.removeAllKeywords), 30)
+local iKeywordsList = imgui.ImBuffer(tostring(mIni.Commands.keywordsList), 30)
 -- imgui variable
 
 -- imgui
@@ -127,6 +142,28 @@ function imgui.OnDrawFrame()
                 inicfg.save(mIni, string.format('ExtraChat/%s', configName))
             end
         end
+        if imgui.CollapsingHeader(u8'Настройка команд') then
+            imgui.PushItemWidth(180)
+            imgui.InputText(u8'Очистить ExtraChat', iClearChat)
+            imgui.InputText(u8'Добавить слово в список', iAddKeyword)
+            imgui.InputText(u8'Удалить слово из списка', iRemoveKeyword)
+            imgui.InputText(u8'Удалить все ключевые слова', iRemoveAllKeywords)
+            imgui.InputText(u8'Перезагрузить список слов', iReloadKeywords)
+            imgui.InputText(u8'Посмотреть все слова из списка', iKeywordsList)
+            imgui.NewLine()
+            if imgui.Button(u8'Сохранить') then
+                mIni.Commands.clearChat = iClearChat.v
+                mIni.Commands.reloadKeywords = iReloadKeywords.v
+                mIni.Commands.removeKeyword = iRemoveKeyword.v
+                mIni.Commands.addKeyword = iAddKeyword.v
+                mIni.Commands.removeAllKeywords = iRemoveAllKeywords.v
+                mIni.Commands.keywordsList = iKeywordsList.v
+                inicfg.save(mIni, string.format('ExtraChat/%s', configName))
+                sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Команды сохранены!', -1)
+                showCursor(false)
+                thisScript():reload()
+            end
+        end
         if imgui.CollapsingHeader(u8'Список слов') then
             imgui.Text(u8'Список загруженных слов:')
             for index, data in ipairs(keywords) do
@@ -151,13 +188,13 @@ function imgui.OnDrawFrame()
         if imgui.CollapsingHeader(u8'Команды') then
             imgui.Text(u8'Список команд:')
             imgui.NewLine()
-            imgui.Text(u8'/clearechat - Очистить ExtraChat')
-            imgui.Text(u8'/addkeyword - Добавить слово в список')
-            imgui.Text(u8'/rmkeyword - Удалить слово из списока')
-            imgui.Text(u8'/reloadwords - Перезагрузить список слов')
-            imgui.Text(u8'/keywordslist - Посмотреть все слова из списка')
-            imgui.Text(u8'/extrachat - Настройка ExtraChat')
-            imgui.Text(u8'/rmallkeywords - Удалить все ключевые слова')
+            imgui.Text(u8('/extrachat - Настройка ExtraChat'))
+            imgui.Text(u8('/'..mIni.Commands.clearChat..' - Очистить ExtraChat'))
+            imgui.Text(u8('/'..mIni.Commands.addKeyword..' - Добавить слово в список'))
+            imgui.Text(u8('/'..mIni.Commands.removeKeyword..' - Удалить слово из списка'))
+            imgui.Text(u8('/'..mIni.Commands.removeAllKeywords..' - Удалить все ключевые слова'))
+            imgui.Text(u8('/'..mIni.Commands.reloadKeywords..' - Перезагрузить список слов'))
+            imgui.Text(u8('/'..mIni.Commands.keywordsList..' - Посмотреть все слова из списка'))
         end
         imgui.End()
     end
@@ -184,8 +221,9 @@ function imgui.OnDrawFrame()
                 '{a785e3}[ExtraChat] {fcfdfd}Все ключевые слова были удалены', -1
             )
             sampAddChatMessage(
-                '{a785e3}[ExtraChat] {fcfdfd}Чтобы добавить ключевые слова используйте команду {a785e3}/addkeyword [слово]', -1
+                '{a785e3}[ExtraChat] {fcfdfd}Чтобы добавить ключевые слова используйте команду {a785e3}/'..mIni.Commands.addKeyword..' [слово]', -1
             )
+
             local file = io.open(keywordsFile, "w")
             file.close()
             file = nil
@@ -215,7 +253,7 @@ function imgui.OnDrawFrame()
             if #iKeyword.v == 0 then
                 sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Введите слово', -1)
             else
-                addWord(iKeyword.v)
+                addWord(u8:decode(iKeyword.v))
                 iKeyword.v = ''
             end
         end
@@ -239,7 +277,7 @@ function imgui.OnDrawFrame()
             if #iKeyword.v == 0 then
                 sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Введите слово', -1)
             else
-                removeWord(iKeyword.v)
+                removeWord(u8:decode(iKeyword.v))
                 iKeyword.v = ''
             end
         end
@@ -277,13 +315,13 @@ function main()
     while not isSampAvailable() do wait(100) end
 
     -- commands
-    sampRegisterChatCommand("clearechat", clearChat)
-    sampRegisterChatCommand("rmallkeywords", rmKeywordsList)
-    sampRegisterChatCommand("addkeyword", addWord)
-    sampRegisterChatCommand("reloadkeywords", reloadWords)
-    sampRegisterChatCommand("keywordslist", wordsList)
+    sampRegisterChatCommand(mIni.Commands.clearChat, clearChat)
+    sampRegisterChatCommand(mIni.Commands.removeAllKeywords, rmKeywordsList)
+    sampRegisterChatCommand(mIni.Commands.addKeyword, addWord)
+    sampRegisterChatCommand(mIni.Commands.reloadKeywords, reloadWords)
+    sampRegisterChatCommand(mIni.Commands.keywordsList, wordsList)
     sampRegisterChatCommand("extrachat", extraChat)
-    sampRegisterChatCommand("rmkeyword", removeWord)
+    sampRegisterChatCommand(mIni.Commands.removeKeyword, removeWord)
     -- commands
 
     messageFont = renderCreateFont(
@@ -331,7 +369,7 @@ function keywordsInit()
         sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Ключевых слов загружено: {a785e3}'..#keywords, -1)
         if #keywords == 0 then
             sampAddChatMessage(
-                '{a785e3}[ExtraChat] {fcfdfd}Чтобы добавить ключевые слова используйте команду {a785e3}/addkeyword [слово]', -1
+                '{a785e3}[ExtraChat] {fcfdfd}Чтобы добавить ключевые слова используйте команду {a785e3}/'..mIni.Commands.addKeyword..' [слово]', -1
             )
         end
     else
@@ -339,7 +377,7 @@ function keywordsInit()
             '{a785e3}[ExtraChat] {fcfdfd}Файл с ключевыми словами не обнаружен и создан автоматически', -1
         )
         sampAddChatMessage(
-            '{a785e3}[ExtraChat] {fcfdfd}Чтобы добавить ключевые слова используйте команду {a785e3}/addkeyword [слово]', -1
+            '{a785e3}[ExtraChat] {fcfdfd}Чтобы добавить ключевые слова используйте команду {a785e3}/'..mIni.Commands.addKeyword..' [слово]', -1
         )
         sampAddChatMessage(
             '{a785e3}[ExtraChat] {fcfdfd}Чтобы посмотреть весь список команд наберите {a785e3}/extrachat', -1
@@ -373,7 +411,7 @@ end
 
 function removeWord(arg)
     if #arg == 0 then
-        sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Используйте: {a785e3}/rmkeyword [слово]", -1)
+        sampAddChatMessage("{a785e3}[ExtraChat] {fcfdfd}Используйте: {a785e3}/"..mIni.Commands.removeKeyword.." [слово]", -1)
     else
         local newKeywords = {}
         local check = false
@@ -404,7 +442,7 @@ end
 function addWord(arg)
     if #arg == 0 then
         sampAddChatMessage(
-            "{a785e3}[ExtraChat] {fcfdfd}Используйте: {a785e3}/addkeyword [слово]", -1
+            "{a785e3}[ExtraChat] {fcfdfd}Используйте: {a785e3}/"..mIni.Commands.addKeyword.." [слово]", -1
         )
     elseif #arg < 3 or #arg > 25 then
         sampAddChatMessage(
