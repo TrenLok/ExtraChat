@@ -79,7 +79,7 @@ local iFontStyleItalic = imgui.ImBool(mIni.Font.fontStyleItalic)
 local iFontStyleStroke = imgui.ImBool(mIni.Font.fontStyleStroke)
 local iFontStyleShadow = imgui.ImBool(mIni.Font.fontStyleShadow)
 
-local iKeyword = imgui.ImBuffer(25)
+local iKeyword = imgui.ImBuffer(128)
 
 local iClearChat = imgui.ImBuffer(tostring(mIni.Commands.clearChat), 30)
 local iReloadKeywords = imgui.ImBuffer(tostring(mIni.Commands.reloadKeywords), 30)
