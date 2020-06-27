@@ -117,7 +117,6 @@ function imgui.OnDrawFrame()
             imgui.Checkbox(u8'Контур', iFontStyleStroke)
             imgui.SameLine()
             imgui.Checkbox(u8'Тень', iFontStyleShadow)
-            imgui.NewLine()
             if imgui.Button(u8'Сохранить настройки') then
                 sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Настройки сохранены!', -1)
                 mIni.Main.PosX = iPosX.v
@@ -141,6 +140,7 @@ function imgui.OnDrawFrame()
                 )
                 inicfg.save(mIni, string.format('ExtraChat/%s', configName))
             end
+            imgui.NewLine()
         end
         if imgui.CollapsingHeader(u8'Настройка команд') then
             imgui.PushItemWidth(180)
@@ -150,7 +150,6 @@ function imgui.OnDrawFrame()
             imgui.InputText(u8'Удалить все ключевые слова', iRemoveAllKeywords)
             imgui.InputText(u8'Перезагрузить список слов', iReloadKeywords)
             imgui.InputText(u8'Посмотреть все слова из списка', iKeywordsList)
-            imgui.NewLine()
             if imgui.Button(u8'Сохранить') then
                 mIni.Commands.clearChat = iClearChat.v
                 mIni.Commands.reloadKeywords = iReloadKeywords.v
@@ -163,6 +162,7 @@ function imgui.OnDrawFrame()
                 showCursor(false)
                 thisScript():reload()
             end
+            imgui.NewLine()
         end
         if imgui.CollapsingHeader(u8'Список слов') then
             imgui.Text(u8'Список загруженных слов:')
@@ -172,7 +172,6 @@ function imgui.OnDrawFrame()
             if #keywords == 0 then
                 imgui.Text(u8"Список слов пуст")
             end
-            imgui.NewLine()
             if imgui.Button(u8'Добавить ключевое слово') then
                 addkeyword_window_state.v = true
                 rmkeyword_window_state.v = false
@@ -184,6 +183,7 @@ function imgui.OnDrawFrame()
                 addkeyword_window_state.v = false
                 iKeyword.v = ''
             end
+            imgui.NewLine()
         end
         if imgui.CollapsingHeader(u8'Команды') then
             imgui.Text(u8'Список команд:')
@@ -199,7 +199,7 @@ function imgui.OnDrawFrame()
         imgui.End()
     end
     if remove_window_state.v then
-        imgui.SetNextWindowSize(imgui.ImVec2(300, 100))
+        imgui.SetNextWindowSize(imgui.ImVec2(300, 80))
         imgui.SetNextWindowPos(
             imgui.ImVec2(sW/2, sH/2), imgui.Cond.FirstUseEver,
             imgui.ImVec2(0.5, 0.5)
@@ -211,7 +211,6 @@ function imgui.OnDrawFrame()
         )
         imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8"Вы уверены?").x) / 2)
         imgui.Text(u8'Вы уверены?')
-        imgui.NewLine()
         imgui.SetCursorPosX((imgui.GetWindowWidth() - 150 + imgui.GetStyle().ItemSpacing.x) /
          2)
         if imgui.Button(u8"Да", imgui.ImVec2(75, 20)) then
@@ -236,7 +235,7 @@ function imgui.OnDrawFrame()
         imgui.End()
     end
     if addkeyword_window_state.v then
-        imgui.SetNextWindowSize(imgui.ImVec2(360, 100))
+        imgui.SetNextWindowSize(imgui.ImVec2(360, 80))
         imgui.SetNextWindowPos(
             imgui.ImVec2(sW/2, sH/2), imgui.Cond.FirstUseEver,
             imgui.ImVec2(0.5, 0.5)
@@ -248,7 +247,6 @@ function imgui.OnDrawFrame()
         )
         imgui.PushItemWidth(180)
         imgui.InputText(u8"Введите ключевое слово", iKeyword)
-        imgui.NewLine()
         if imgui.Button(u8"Добавить") then
             if #iKeyword.v == 0 then
                 sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Введите слово', -1)
@@ -260,7 +258,7 @@ function imgui.OnDrawFrame()
         imgui.End()
     end
     if rmkeyword_window_state.v then
-        imgui.SetNextWindowSize(imgui.ImVec2(360, 100))
+        imgui.SetNextWindowSize(imgui.ImVec2(360, 80))
         imgui.SetNextWindowPos(
             imgui.ImVec2(sW/2, sH/2), imgui.Cond.FirstUseEver,
             imgui.ImVec2(0.5, 0.5)
@@ -272,7 +270,6 @@ function imgui.OnDrawFrame()
         )
         imgui.PushItemWidth(180)
         imgui.InputText(u8"Введите ключевое слово", iKeyword)
-        imgui.NewLine()
         if imgui.Button(u8"Удалить") then
             if #iKeyword.v == 0 then
                 sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Введите слово', -1)
@@ -483,3 +480,60 @@ end
 function rmKeywordsList()
     remove_window_state.v = not remove_window_state.v
 end
+
+function apply_custom_style()
+    local style = imgui.GetStyle()
+    local colors = style.Colors
+    local clr = imgui.Col
+    local ImVec4 = imgui.ImVec4
+    style.WindowTitleAlign = imgui.ImVec2(0.5, 0.5)
+    style.Alpha = 1.0
+    colors[clr.WindowBg]              = ImVec4(0.00, 0.00, 0.00, 0.90)
+    colors[clr.ChildWindowBg]         = ImVec4(0.00, 0.00, 0.00, 0.90)
+    colors[clr.PopupBg]               = ImVec4(0.02, 0.02, 0.02, 1.00)
+    colors[clr.Border]                = ImVec4(0.89, 0.85, 0.92, 0.30)
+    colors[clr.BorderShadow]          = ImVec4(0.00, 0.00, 0.00, 0.00)
+    colors[clr.FrameBg]               = ImVec4(0.30, 0.20, 0.39, 1.00)
+    colors[clr.FrameBgHovered]        = ImVec4(0.41, 0.19, 0.63, 0.68)
+    colors[clr.FrameBgActive]         = ImVec4(0.41, 0.19, 0.63, 1.00)
+    colors[clr.TitleBg]               = ImVec4(0.41, 0.19, 0.63, 1.00)
+    colors[clr.TitleBgCollapsed]      = ImVec4(0.41, 0.19, 0.63, 1.00)
+    colors[clr.TitleBgActive]         = ImVec4(0.41, 0.19, 0.63, 1.00)
+    colors[clr.MenuBarBg]             = ImVec4(0.30, 0.20, 0.39, 0.57)
+    colors[clr.ScrollbarBg]           = ImVec4(0.30, 0.20, 0.39, 1.00)
+    colors[clr.ScrollbarGrab]         = ImVec4(0.41, 0.19, 0.63, 0.31)
+    colors[clr.ScrollbarGrabHovered]  = ImVec4(0.41, 0.19, 0.63, 0.78)
+    colors[clr.ScrollbarGrabActive]   = ImVec4(0.41, 0.19, 0.63, 1.00)
+    colors[clr.ComboBg]               = ImVec4(0.30, 0.20, 0.39, 1.00)
+    colors[clr.CheckMark]             = ImVec4(0.56, 0.61, 1.00, 1.00)
+    colors[clr.SliderGrab]            = ImVec4(0.41, 0.19, 0.63, 0.24)
+    colors[clr.SliderGrabActive]      = ImVec4(0.41, 0.19, 0.63, 1.00)
+    colors[clr.Button]                = ImVec4(0.41, 0.19, 0.63, 0.44)
+    colors[clr.ButtonHovered]         = ImVec4(0.41, 0.19, 0.63, 0.86)
+    colors[clr.ButtonActive]          = ImVec4(0.64, 0.33, 0.94, 1.00)
+    colors[clr.Header]                = ImVec4(0.41, 0.19, 0.63, 0.76)
+    colors[clr.HeaderHovered]         = ImVec4(0.41, 0.19, 0.63, 0.86)
+    colors[clr.HeaderActive]          = ImVec4(0.41, 0.19, 0.63, 1.00)
+    colors[clr.ResizeGrip]            = ImVec4(0.41, 0.19, 0.63, 0.20)
+    colors[clr.ResizeGripHovered]     = ImVec4(0.41, 0.19, 0.63, 0.78)
+    colors[clr.ResizeGripActive]      = ImVec4(0.41, 0.19, 0.63, 1.00)
+    colors[clr.CloseButton]           = ImVec4(0.47, 0.25, 0.62, 1.00)
+    colors[clr.CloseButtonHovered]    = ImVec4(0.56, 0.30, 0.65, 1.00)
+    colors[clr.CloseButtonActive]     = ImVec4(0.56, 0.30, 0.65, 1.00)
+    colors[clr.PlotLines]             = ImVec4(0.89, 0.85, 0.92, 0.63)
+    colors[clr.PlotLinesHovered]      = ImVec4(0.41, 0.19, 0.63, 1.00)
+    colors[clr.PlotHistogram]         = ImVec4(0.89, 0.85, 0.92, 0.63)
+    colors[clr.PlotHistogramHovered]  = ImVec4(0.41, 0.19, 0.63, 1.00)
+    colors[clr.TextSelectedBg]        = ImVec4(0.41, 0.19, 0.63, 0.43)
+    colors[clr.ModalWindowDarkening]  = ImVec4(0.20, 0.20, 0.20, 0.35)
+    style.WindowRounding = 3.0
+    style.ChildWindowRounding = 2.0
+    style.FrameRounding = 3.0
+    style.ItemSpacing = imgui.ImVec2(5.0, 4.0)
+    style.ScrollbarSize = 10.0
+    style.ScrollbarRounding = 3
+    style.GrabMinSize = 9.0
+    style.GrabRounding = 2.0
+    style.IndentSpacing = 25.0
+end
+apply_custom_style()
