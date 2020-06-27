@@ -15,8 +15,10 @@ local sampev = require 'lib.samp.events'
 local sW, sH = getScreenResolution()
 local configName = 'config.ini'
 local keywordsFile = 'moonloader/config/ExtraChat/keywords.txt'
+local logFile = 'moonloader/config/ExtraChat/log.txt'
 local keywordsMessages = {}
 local keywords = {}
+local log = {}
 
 encoding.default = 'CP1251'
 u8 = encoding.UTF8
@@ -29,6 +31,7 @@ mIni = inicfg.load({
         PosY = sH/2,
         maxMessage = 10,
         timestamp = false,
+        log = false,
     },
     Font = {
 		font = 'Arial',
@@ -68,6 +71,7 @@ local iPosX = imgui.ImInt(mIni.Main.PosX)
 local iPosY = imgui.ImInt(mIni.Main.PosY)
 local iMaxMessage = imgui.ImInt(mIni.Main.maxMessage)
 local iTimestamp = imgui.ImBool(mIni.Main.timestamp)
+local iLog = imgui.ImBool(mIni.Main.log)
 local iFontSize = imgui.ImInt(mIni.Font.fontSize)
 local iFont = imgui.ImBuffer(tostring(mIni.Font.font), 30)
 local iFontStyleBold = imgui.ImBool(mIni.Font.fontStyleBold)
@@ -106,6 +110,7 @@ function imgui.OnDrawFrame()
             imgui.InputInt(u8'Позиция по Y', iPosY)
             imgui.InputInt(u8'Максимальное количество строк', iMaxMessage)
             imgui.Checkbox(u8'Показывать время отправки сообщения', iTimestamp)
+            imgui.Checkbox(u8'Сохранять последние сообщения после выход из игры', iLog)
             imgui.NewLine()
             imgui.Text(u8'Настройки шрифта')
             imgui.InputInt(u8'Размер шрифта', iFontSize)
@@ -123,6 +128,7 @@ function imgui.OnDrawFrame()
                 mIni.Main.PosY = iPosY.v
                 mIni.Main.maxMessage = iMaxMessage.v
                 mIni.Main.timestamp =  iTimestamp.v
+                mIni.Main.log = iLog.v
                 mIni.Font.fontSize = iFontSize.v
                 mIni.Font.font = iFont.v
                 mIni.Font.fontStyleBold = iFontStyleBold.v
@@ -139,6 +145,11 @@ function imgui.OnDrawFrame()
                         iFontStyleShadow.v)
                 )
                 inicfg.save(mIni, string.format('ExtraChat/%s', configName))
+                if not mIni.Main.log then
+                    local file = io.open(logFile, "w")
+                    file.close()
+                    file = nil
+                end
             end
             imgui.NewLine()
         end
@@ -292,14 +303,20 @@ function sampev.onServerMessage(color, message)
                 table.insert
                 (
                     keywordsMessages,
-                    string.format("%s {%s}%s", os.date("[%H:%M:%S] "), hexcolor, message)
+                    string.format("%s {%s}%s", os.date("[%H:%M:%S]"), hexcolor, message)
                 )
+                if mIni.Main.log then
+                    writeLog(string.format("%s {%s}%s", os.date("[%H:%M:%S]"), hexcolor, message))
+                end
             else
                 table.insert
                 (
                     keywordsMessages,
                     string.format("{%s}%s", hexcolor, message)
                 )
+                if mIni.Main.log then
+                    writeLog(string.format("{%s}%s", hexcolor, message))
+                end
             end
             return {color, message}
         end
@@ -334,6 +351,7 @@ function main()
 
     sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Скрипт успешно загружен. Автор: {a785e3}TrenLok', -1)
     keywordsInit()
+    logInit()
 
     while true do
         wait(0)
@@ -355,6 +373,35 @@ end
 
 function extraChat()
     main_window_state.v = not main_window_state.v
+end
+
+function writeLog(text)
+    table.insert(log, text)
+    if #log > mIni.Main.maxMessage then
+        table.remove(log, 1)
+    end
+    local file = io.open(logFile, "w")
+    for _, v in ipairs(log) do
+        file:write(u8(v)..'\n')
+    end
+    file:close()
+    file = nil
+end
+
+function  logInit()
+    log = {}
+    if doesFileExist(logFile) then
+        for logMessage in io.lines(logFile) do
+            table.insert(keywordsMessages, u8:decode(logMessage))
+        end
+        local file = io.open(logFile, "w")
+        file.close()
+        file = nil
+    else
+        local file = io.open(logFile, "w")
+        file.close()
+        file = nil
+    end
 end
 
 function keywordsInit()
