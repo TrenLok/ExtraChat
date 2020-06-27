@@ -123,32 +123,42 @@ function imgui.OnDrawFrame()
             imgui.SameLine()
             imgui.Checkbox(u8'Тень', iFontStyleShadow)
             if imgui.Button(u8'Сохранить настройки') then
-                sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Настройки сохранены!', -1)
-                mIni.Main.PosX = iPosX.v
-                mIni.Main.PosY = iPosY.v
-                mIni.Main.maxMessage = iMaxMessage.v
-                mIni.Main.timestamp =  iTimestamp.v
-                mIni.Main.log = iLog.v
-                mIni.Font.fontSize = iFontSize.v
-                mIni.Font.font = iFont.v
-                mIni.Font.fontStyleBold = iFontStyleBold.v
-                mIni.Font.fontStyleItalic = iFontStyleItalic.v
-                mIni.Font.fontStyleStroke = iFontStyleStroke.v
-                mIni.Font.fontStyleShadow = iFontStyleShadow.v
-                messageFont = renderCreateFont(
-                    iFont.v,
-                    iFontSize.v,
-                    getFontStyle(
-                        iFontStyleBold.v,
-                        iFontStyleItalic.v,
-                        iFontStyleStroke.v,
-                        iFontStyleShadow.v)
-                )
-                inicfg.save(mIni, string.format('ExtraChat/%s', configName))
-                if not mIni.Main.log then
-                    local file = io.open(logFile, "w")
-                    file.close()
-                    file = nil
+                if iMaxMessage.v < 1 then
+                    sampAddChatMessage(
+                        '{a785e3}[ExtraChat] {fcfdfd}Минимальное количество строк 1', -1
+                    )
+                elseif iFontSize.v < 1 then
+                    sampAddChatMessage(
+                        '{a785e3}[ExtraChat] {fcfdfd}Минимальные размер шрифта 1', -1
+                    )
+                else
+                    sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Настройки сохранены!', -1)
+                    mIni.Main.PosX = iPosX.v
+                    mIni.Main.PosY = iPosY.v
+                    mIni.Main.maxMessage = iMaxMessage.v
+                    mIni.Main.timestamp =  iTimestamp.v
+                    mIni.Main.log = iLog.v
+                    mIni.Font.fontSize = iFontSize.v
+                    mIni.Font.font = iFont.v
+                    mIni.Font.fontStyleBold = iFontStyleBold.v
+                    mIni.Font.fontStyleItalic = iFontStyleItalic.v
+                    mIni.Font.fontStyleStroke = iFontStyleStroke.v
+                    mIni.Font.fontStyleShadow = iFontStyleShadow.v
+                    messageFont = renderCreateFont(
+                        iFont.v,
+                        iFontSize.v,
+                        getFontStyle(
+                            iFontStyleBold.v,
+                            iFontStyleItalic.v,
+                            iFontStyleStroke.v,
+                            iFontStyleShadow.v)
+                    )
+                    inicfg.save(mIni, string.format('ExtraChat/%s', configName))
+                    if not mIni.Main.log then
+                        local file = io.open(logFile, "w")
+                        file.close()
+                        file = nil
+                    end
                 end
             end
             imgui.NewLine()
@@ -162,16 +172,28 @@ function imgui.OnDrawFrame()
             imgui.InputText(u8'Перезагрузить список слов', iReloadKeywords)
             imgui.InputText(u8'Посмотреть все слова из списка', iKeywordsList)
             if imgui.Button(u8'Сохранить') then
-                mIni.Commands.clearChat = iClearChat.v
-                mIni.Commands.reloadKeywords = iReloadKeywords.v
-                mIni.Commands.removeKeyword = iRemoveKeyword.v
-                mIni.Commands.addKeyword = iAddKeyword.v
-                mIni.Commands.removeAllKeywords = iRemoveAllKeywords.v
-                mIni.Commands.keywordsList = iKeywordsList.v
-                inicfg.save(mIni, string.format('ExtraChat/%s', configName))
-                sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Команды сохранены!', -1)
-                showCursor(false)
-                thisScript():reload()
+                if #iClearChat.v == 0
+                    or #iReloadKeywords.v == 0
+                    or #iRemoveKeyword.v == 0
+                    or #iAddKeyword.v == 0
+                    or #iRemoveAllKeywords.v == 0
+                    or #iKeywordsList.v == 0
+                then
+                    sampAddChatMessage(
+                        '{a785e3}[ExtraChat] {fcfdfd}Введите команду', -1
+                    )
+                else
+                    mIni.Commands.clearChat = iClearChat.v
+                    mIni.Commands.reloadKeywords = iReloadKeywords.v
+                    mIni.Commands.removeKeyword = iRemoveKeyword.v
+                    mIni.Commands.addKeyword = iAddKeyword.v
+                    mIni.Commands.removeAllKeywords = iRemoveAllKeywords.v
+                    mIni.Commands.keywordsList = iKeywordsList.v
+                    inicfg.save(mIni, string.format('ExtraChat/%s', configName))
+                    sampAddChatMessage('{a785e3}[ExtraChat] {fcfdfd}Команды сохранены!', -1)
+                    showCursor(false)
+                    thisScript():reload()
+                end
             end
             imgui.NewLine()
         end
